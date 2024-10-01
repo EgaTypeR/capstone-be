@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/capstone-be/controllers"
 	"github.com/capstone-be/routers"
 	"github.com/capstone-be/utils"
 	"github.com/gin-gonic/gin"
@@ -17,12 +18,15 @@ func main() {
 	}
 
 	router := gin.Default()
-	client := utils.ConnectDB()
+	client, err := utils.ConnectDB()
+	if err != nil {
+		log.Fatal("Error connect to database")
+	}
 	defer client.Disconnect(context.TODO())
-	
 
-	db := client.Database("CrimeAlertCapstone")
-	routers.InitRouters(db, router)
+	routers.InitRouters(router)
+
+	go controllers.HandleBroadcast()
 
 	log.Fatal(router.Run(":" + os.Getenv("PORT")))
 
