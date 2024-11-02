@@ -4,10 +4,12 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/capstone-be/controllers"
 	"github.com/capstone-be/routers"
 	"github.com/capstone-be/utils"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -18,6 +20,14 @@ func main() {
 	}
 
 	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,                                              // Allow your frontend URL
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"}, // Allowed HTTP methods
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 	client, err := utils.ConnectDB()
 	if err != nil {
 		log.Fatal("Error connect to database")
