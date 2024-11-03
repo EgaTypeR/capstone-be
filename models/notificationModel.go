@@ -7,11 +7,11 @@ import (
 )
 
 type Notification struct {
-	ID               primitive.ObjectID `bson:"_id,omitempty"`
-	EventID          primitive.ObjectID `bson:"event_id"`
-	UserID           primitive.ObjectID `bson:"user_id"`
-	NotificationType string             `bson:"notification_type"`
-	Message          string             `bson:"message"`
-	Read             bool               `bson:"read"`
-	SentAt           time.Time          `bson:"sent_at"`
+	ID      primitive.ObjectID `bson:"_id,omitempty"`
+	EventID primitive.ObjectID `bson:"event_id"`
+	UserID  primitive.ObjectID `bson:"user_id"`
+	Danger  bool               `bson:"danger"`
+	Message string             `bson:"message"`
+	Read    bool               `bson:"read"`
+	SentAt  time.Time          `bson:"sent_at"`
 }

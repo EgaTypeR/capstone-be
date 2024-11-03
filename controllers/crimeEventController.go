@@ -89,6 +89,7 @@ func SendCrimeEventV2(c *gin.Context) {
 	notification.Read = false
 	notification.SentAt = time.Now()
 	notification.Message = "this is message"
+	notification.Danger = crimeEvent.Danger
 	err = SendNotification(notification)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
