@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"log"
 	"net/http"
 
@@ -16,7 +15,7 @@ func GetNotification(c *gin.Context) {
 
 	filter := bson.M{}
 
-	cursor, err := collection.Find(context.TODO(), filter)
+	cursor, err := collection.Find(c, filter)
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		log.Print(err.Error())
@@ -25,13 +24,13 @@ func GetNotification(c *gin.Context) {
 
 	var notification []models.Notification
 
-	if err := cursor.All(context.TODO(), &notification); err != nil {
+	if err := cursor.All(c, &notification); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		log.Print(err.Error())
 		return
 	}
 
-	if err := cursor.Close(context.TODO()); err != nil {
+	if err := cursor.Close(c); err != nil {
 		log.Print(err.Error())
 	}
 

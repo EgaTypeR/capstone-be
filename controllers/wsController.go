@@ -1,15 +1,12 @@
 package controllers
 
 import (
-	"context"
 	"log"
 	"net/http"
 
 	"github.com/capstone-be/models"
-	"github.com/capstone-be/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var upgrader = websocket.Upgrader{
@@ -61,14 +58,6 @@ func HandleBroadcast() {
 }
 
 func SendNotification(data models.Notification) error {
-	collection := utils.DB.Collection("Notification")
-	res, err := collection.InsertOne(context.TODO(), data)
-	if err != nil {
-		return err
-	}
-
-	notifID, _ := res.InsertedID.(primitive.ObjectID)
-	data.ID = notifID
 	broadcast <- data
 	return nil
 }

@@ -57,47 +57,77 @@ import (
 func SendCrimeEventV2(c *gin.Context) {
 	var request models.RequestDetector
 	var crimeEvent *models.CrimeEvent
-	var notification models.Notification
+	var notification models.Notification // Initialize notification directly as a struct, not a pointer
 
+	// Parse JSON request body
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Print(err.Error())
 		return
 	}
 
+	// Map request to crime event
 	crimeEvent, err = utils.MapRequestDetectorToCrimeEvent(request)
 	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Print(err.Error())
 		return
 	}
 
-	// Simpan Ke Database
+	// Save CrimeEvent to the database
 	collection := utils.DB.Collection("CrimeEvent")
 	res, err := collection.InsertOne(c, crimeEvent)
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to insert crime event"})
 		log.Print(err.Error())
 		return
 	}
 
-	eventID, _ := res.InsertedID.(primitive.ObjectID)
+	// Retrieve the inserted CrimeEvent ID
+	eventID, ok := res.InsertedID.(primitive.ObjectID)
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to get inserted crime event ID"})
+		return
+	}
 
-	// Send notif
-	notification.EventID = eventID
-	notification.Read = false
-	notification.SentAt = time.Now()
-	notification.Message = "this is message"
-	notification.Danger = crimeEvent.Danger
+	// Initialize notification with necessary fields
+	notification = models.Notification{
+		EventID: eventID,
+		Read:    false,
+		SentAt:  time.Now(),
+		Message: "this is message",
+		Danger:  crimeEvent.Danger,
+	}
+
+	// Save Notification to the database
+	notifCollection := utils.DB.Collection("Notification")
+	notifRes, err := notifCollection.InsertOne(c, &notification)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to insert notification"})
+		log.Print(err.Error())
+		return
+	}
+
+	// Retrieve the inserted Notification ID
+	notifID, ok := notifRes.InsertedID.(primitive.ObjectID)
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to get inserted notification ID"})
+		return
+	}
+
+	notification.ID = notifID
+
+	// Send Notification (external function)
 	err = SendNotification(notification)
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to send notification"})
 		log.Print(err.Error())
 		return
 	}
+
+	// Send JSON response
 	c.JSON(http.StatusAccepted, gin.H{
 		"message": "successful",
 	})
-
 }
