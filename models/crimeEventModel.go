@@ -43,23 +43,23 @@ type UpdateAlert struct {
 // Data structure for catch crime event data drom detection module
 type RequestDetector struct {
 	Frame     int    `json:"frame"`
-	Group     bool   `json:"group"`
+	Group     int    `json:"group"`
 	Persons   int    `json:"persons"`
-	Celurit   bool   `json:"celurit"`
-	Pisau     bool   `json:"pisau"`
-	Pistol    bool   `json:"pistol"`
-	Weapons   bool   `json:"wapons"`
-	Anomaly   bool   `json:"anomaly"`
-	Status    bool   `json:"status"`
+	Celurit   int    `json:"celurit"`
+	Pisau     int    `json:"pisau"`
+	Pistol    int    `json:"pistol"`
+	Weapons   int    `json:"wapons"`
+	Anomaly   int    `json:"anomaly"`
+	Status    int    `json:"status"`
 	Timestamp string `json:"timestamp"`
 }
 
 type CrimeType struct {
-	Group   bool `json:"group"`
-	Persons int  `json:"persons"`
-	Celurit bool `json:"celurit"`
-	Pisau   bool `json:"pisau"`
-	Pistol  bool `json:"pistol"`
-	Weapons bool `json:"wapons"`
-	Anomaly bool `json:"anomaly"`
+	Group   int `json:"group"`
+	Persons int `json:"persons"`
+	Celurit int `json:"celurit"`
+	Pisau   int `json:"pisau"`
+	Pistol  int `json:"pistol"`
+	Weapons int `json:"wapons"`
+	Anomaly int `json:"anomaly"`
 }
