@@ -136,6 +136,7 @@ func SendCrimeEventV2(c *gin.Context) {
 func SendFile(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
+		log.Print(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get file from request"})
 		return
 	}
@@ -148,6 +149,7 @@ func SendFile(c *gin.Context) {
 
 	// Save the file to the specified directory
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		log.Print(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
 		return
 	}
