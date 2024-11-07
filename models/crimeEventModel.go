@@ -52,6 +52,7 @@ type RequestDetector struct {
 	Anomaly   int    `json:"anomaly"`
 	Status    int    `json:"status"`
 	Timestamp string `json:"timestamp"`
+	FileName  string `json:"file_name"`
 }
 
 type CrimeType struct {

@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"github.com/capstone-be/models"
@@ -130,4 +131,32 @@ func SendCrimeEventV2(c *gin.Context) {
 	c.JSON(http.StatusAccepted, gin.H{
 		"message": "successful",
 	})
+}
+
+func SendFile(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get file from request"})
+		return
+	}
+	// Specify the directory to save the file
+	uploadDir := "./storage/crime-footage"
+	// Ensure the directory exists (you may need to create it manually or add code to create it)
+
+	// Get the filename and create the full path
+	filePath := filepath.Join(uploadDir, file.Filename)
+
+	// Save the file to the specified directory
+	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+		return
+	}
+
+	// Respond with success and the path of the saved file
+	c.JSON(http.StatusOK, gin.H{
+		"message":   "File uploaded successfully",
+		"file_path": filePath,
+		"file_name": file.Filename,
+	})
+
 }

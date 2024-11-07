@@ -23,6 +23,7 @@ func MapRequestDetectorToCrimeEvent(req models.RequestDetector) (*models.CrimeEv
 	res.CrimeType.Pisau = req.Pisau
 	res.CrimeType.Weapons = req.Weapons
 	res.CrimeType.Anomaly = req.Anomaly
+	res.FootagePath = req.FileName
 
 	res.DetectedAt = customParseTime(req.Timestamp)
 	if req.Status == 2 {
