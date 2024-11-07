@@ -158,5 +158,4 @@ func SendFile(c *gin.Context) {
 		"file_path": filePath,
 		"file_name": file.Filename,
 	})
-
 }
