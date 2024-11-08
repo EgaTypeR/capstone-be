@@ -17,8 +17,9 @@ type CrimeEvent struct {
 	Danger           bool               `bson:"danger" json:"danger"`
 	Dispatched       bool               `bson:"dispatched" json:"dispatched"`
 	Done             bool               `bson:"done" json:"done"`
-	Frame            int                `json:"frame"`
+	Frame            int                `bso:"frame" json:"frame"`
 	FootagePath      string             `bson:"footage_path" json:"footage_path"`
+	Verification     bool               `bson:"verification" json:"verification"`
 	NotificationSent bool               `bson:"notification_sent" json:"notification_sent"`
 }
 
@@ -36,23 +37,25 @@ type HistoryAlert struct {
 
 // Used for API update dispatched or done, subset of CrimeEvent
 type UpdateAlert struct {
-	Dispatched *bool `bson:"dispatched" json:"dispatched"`
-	Done       *bool `bson:"done" json:"done"`
+	Dispatched   *bool `bson:"dispatched" json:"dispatched"`
+	Done         *bool `bson:"done" json:"done"`
+	Verification *bool `bson:"verification" json:"verification"`
 }
 
 // Data structure for catch crime event data drom detection module
 type RequestDetector struct {
-	Frame     int    `json:"frame"`
-	Group     int    `json:"group"`
-	Persons   int    `json:"persons"`
-	Celurit   int    `json:"celurit"`
-	Pisau     int    `json:"pisau"`
-	Pistol    int    `json:"pistol"`
-	Weapons   int    `json:"wapons"`
-	Anomaly   int    `json:"anomaly"`
-	Status    int    `json:"status"`
-	Timestamp string `json:"timestamp"`
-	FileName  string `json:"file_name"`
+	Frame     int                `json:"frame"`
+	Group     int                `json:"group"`
+	Persons   int                `json:"persons"`
+	Celurit   int                `json:"celurit"`
+	Pisau     int                `json:"pisau"`
+	Pistol    int                `json:"pistol"`
+	Weapons   int                `json:"wapons"`
+	Anomaly   int                `json:"anomaly"`
+	Status    int                `json:"status"`
+	Timestamp string             `json:"timestamp"`
+	FileName  string             `json:"file_name"`
+	CameraID  primitive.ObjectID `json:"camera_id"`
 }
 
 type CrimeType struct {

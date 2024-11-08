@@ -24,6 +24,8 @@ func MapRequestDetectorToCrimeEvent(req models.RequestDetector) (*models.CrimeEv
 	res.CrimeType.Weapons = req.Weapons
 	res.CrimeType.Anomaly = req.Anomaly
 	res.FootagePath = req.FileName
+	res.Frame = req.Frame
+	res.CameraID = req.CameraID
 
 	res.DetectedAt = customParseTime(req.Timestamp)
 	if req.Status == 2 {
@@ -31,9 +33,11 @@ func MapRequestDetectorToCrimeEvent(req models.RequestDetector) (*models.CrimeEv
 	} else {
 		res.Danger = false
 	}
+
+	// default value
 	res.Dispatched = false
 	res.Done = false
-	res.Frame = req.Frame
+	res.Verification = false
 	return &res, nil
 }
 

@@ -34,16 +34,16 @@ func GetHistoryAlerts(c *gin.Context) {
 	var matchStage bson.D
 	switch filter {
 	case "done":
-		matchStage = bson.D{{Key: "done", Value: true}}
+		matchStage = bson.D{{Key: "done", Value: true}, {Key: "verification", Value: true}}
 	case "ongoing":
-		matchStage = bson.D{{Key: "done", Value: false}}
+		matchStage = bson.D{{Key: "done", Value: false}, {Key: "verification", Value: true}}
+	case "unverif":
+		matchStage = bson.D{{Key: "verification", Value: false}}
 	default:
-		matchStage = nil
+		matchStage = bson.D{{Key: "verification", Value: true}}
 	}
 
-	if matchStage != nil {
-		pipeline = append(pipeline, bson.D{{Key: "$match", Value: matchStage}})
-	}
+	pipeline = append(pipeline, bson.D{{Key: "$match", Value: matchStage}})
 
 	cursor, err := collection.Aggregate(c, pipeline)
 	if err != nil {
@@ -96,6 +96,9 @@ func UpdateAlert(c *gin.Context) {
 	}
 	if updateParams.Done != nil {
 		updateField["done"] = *updateParams.Done
+	}
+	if updateParams.Verification != nil {
+		updateField["verification"] = *updateParams.Verification
 	}
 
 	if len(updateField) == 0 {
