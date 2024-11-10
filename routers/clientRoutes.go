@@ -17,4 +17,8 @@ func ClientRoute(router *gin.Engine) {
 	// Alert Page
 	groupRouter.GET("/count-unread-notif", controllers.CountUnreadNotification)
 	groupRouter.PATCH("/read-notif", controllers.ReadNotification)
+
+	// Camera
+	groupRouter.GET("/cameras", controllers.GetCameras)
+	groupRouter.POST("/add-camera", controllers.AddCameras)
 }

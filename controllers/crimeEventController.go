@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -68,14 +69,6 @@ func SendCrimeEventV2(c *gin.Context) {
 		return
 	}
 
-	// Hard Coded Camera ID
-	request.CameraID, err = primitive.ObjectIDFromHex("00000000000000000000c251")
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		log.Print(err.Error())
-		return
-	}
-
 	// Map request to crime event
 	crimeEvent, err = utils.MapRequestDetectorToCrimeEvent(request)
 	if err != nil {
@@ -111,7 +104,6 @@ func SendCrimeEventV2(c *gin.Context) {
 	}
 
 	go notificationController(notification)
-
 	// Send JSON response
 	c.JSON(http.StatusAccepted, gin.H{
 		"message": "successful",
@@ -152,19 +144,30 @@ func SendFile(c *gin.Context) {
 	// Ensure the directory exists (you may need to create it manually or add code to create it)
 
 	// Get the filename and create the full path
-	filePath := filepath.Join(uploadDir, file.Filename)
+	tempFilePath := filepath.Join(uploadDir, file.Filename)
+
+	footageName := utils.FootageFileName(file.Filename)
+	footagePath := filepath.Join(uploadDir, footageName)
 
 	// Save the file to the specified directory
-	if err := c.SaveUploadedFile(file, filePath); err != nil {
+	if err := c.SaveUploadedFile(file, tempFilePath); err != nil {
 		log.Print(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
 		return
 	}
 
+	go func() {
+		if err := utils.ConvertVideo(tempFilePath, footagePath); err != nil {
+			log.Print(err.Error())
+		} else {
+			os.Remove(tempFilePath)
+		}
+	}()
+
 	// Respond with success and the path of the saved file
 	c.JSON(http.StatusOK, gin.H{
 		"message":   "File uploaded successfully",
-		"file_path": filePath,
+		"file_path": footageName,
 		"file_name": file.Filename,
 	})
 }

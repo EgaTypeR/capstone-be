@@ -12,7 +12,7 @@ func MapRequestDetectorToCrimeEvent(req models.RequestDetector) (*models.CrimeEv
 	var res models.CrimeEvent
 	var err error
 
-	res.CameraID, err = primitive.ObjectIDFromHex("00000000000000000000c251")
+	res.CameraID, err = primitive.ObjectIDFromHex(req.CameraID.Hex())
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +23,7 @@ func MapRequestDetectorToCrimeEvent(req models.RequestDetector) (*models.CrimeEv
 	res.CrimeType.Pisau = req.Pisau
 	res.CrimeType.Weapons = req.Weapons
 	res.CrimeType.Anomaly = req.Anomaly
-	res.FootagePath = req.FileName
+	res.FootagePath = FootageFileName(req.FileName)
 	res.Frame = req.Frame
 	res.CameraID = req.CameraID
 
