@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -30,8 +31,10 @@ func MapRequestDetectorToCrimeEvent(req models.RequestDetector) (*models.CrimeEv
 	res.DetectedAt = customParseTime(req.Timestamp)
 	if req.Status == 2 {
 		res.Danger = true
-	} else {
+	} else if req.Status == 1 {
 		res.Danger = false
+	} else {
+		return nil, errors.New("status must be between 1 or 2, 1 for warning 2 for danger")
 	}
 
 	// default value
